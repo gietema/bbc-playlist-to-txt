@@ -1,4 +1,5 @@
 """Save playlist in BBC radio URL to txt"""
+import json
 import logging
 from typing import List
 import requests
@@ -35,20 +36,24 @@ def get_playlist(url: str) -> List[str]:
     ----------
     url: str
         The bbc playlist url
-    
+
     Returns
     -------
     List[str]: A list of strings where each string is artist + title song
     """
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
-    res = soup.find_all("div", class_="sc-c-basic-tile")
+    for item in soup.find_all("script"):
+        if "Tracklist" in str(item):
+            data_script = item
     playlist = []
-    for element in res:
-        song = element.find("div", class_="sc-c-basic-tile__text")["title"]
-        playlist.append(song)
+    for item in json.loads(str(data_script)[38:][:-11])["modules"]["data"][1]["data"]:
+        item = item["titles"]
+        title = item["primary"] + " - " + item["secondary"]
+        if item["tertiary"] is not None:
+            title += " " + item["tertiary"]
+        playlist.append(title)
     return playlist
-
 
 def save_playlist(playlist: List[str], output_filepath: Path):
     """
