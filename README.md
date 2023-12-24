@@ -8,14 +8,25 @@ Requirements:
 
 ## Install
 
-`pip install -r requirements.txt`
+`poetry install`
 
 ## Usage
 ```
-python bbc_url_to_txt.py -url {url} --output-filepath {full_path.txt}
+poetry run python bbc_url_to_txt.py -url {url} --output-filepath {full_path.txt}
 ```
 
 Example:  
 ```
-python bbc_url_to_txt.py -url https://www.bbc.co.uk/sounds/play/m000jfcw --output-filepath ~/Desktop/gilles_peterson_2020_05_23.txt
+python bbc_url_to_txt.py -url https://www.bbc.co.uk/sounds/play/m001tj4b --output-filepath playlist.txt
+```
+
+# Move playlist to spotify
+```commandline
+cp .test.env .env
+```
+Fill in the `.env` file with your spotify credentials
+
+Then, run the 
+```commandline
+poetry run python bbc_to_spotify/main.py --playlist playlist.txt --playlist-name "Gilles Peterson 2023-12-23"
 ```
