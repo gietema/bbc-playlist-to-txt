@@ -1,4 +1,4 @@
-# BBC URL to txt
+# BBC URL to txt to playlist
 
 Two sccripts:
 
