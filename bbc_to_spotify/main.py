@@ -44,14 +44,14 @@ def main(playlist: str, playlist_name: str):
             original_artist = song.split("-")[0].strip().lower()
             # check if there is some sort of match, levenstein distance maybe
             if not match(name, original_title) or not match(artist, original_artist):
-                print(f"Couldn't find {original_title} by {original_artist}")
+                print(f"Couldn't find {original_title} {original_artist}")
                 continue
             track_uris.append(tracks[0]['uri'])
             artists.append(artist)
 
     # Creating a new playlist
     playlist = sp.user_playlist_create(user=username, name=playlist_name, public=True,
-                                       description="Songs by " + ", ".join(artists))
+                                       description="Songs by " + ", ".join(list(set(artists))))
     playlist_id = playlist['id']
 
     # Adding songs to the playlist
