@@ -49,11 +49,16 @@ def get_playlist(url: str) -> List[str]:
     playlist = []
     for item in json.loads(str(data_script)[38:][:-11])["modules"]["data"][1]["data"]:
         item = item["titles"]
-        title = item["primary"] + " - " + item["secondary"] if item["secondary"] is not None else item["primary"]
+        title = (
+            item["primary"] + " - " + item["secondary"]
+            if item["secondary"] is not None
+            else item["primary"]
+        )
         if item["tertiary"] is not None:
             title += " " + item["tertiary"]
         playlist.append(title)
     return playlist
+
 
 def save_playlist(playlist: List[str], output_filepath: Path):
     """

@@ -32,5 +32,11 @@ Fill in the `.env` file with your spotify credentials
 Then, run the
 
 ```commandline
-poetry run python bbc_to_spotify/main.py --playlist playlist.txt --playlist-name "Gilles Peterson 2023-12-23"
+poetry run python bbc_to_spotify/create_playlist.py --playlist playlist.txt --playlist-name "Gilles Peterson 2023-12-23"
+```
+
+# Combined script to directly create the playlist
+
+```commandline
+poetry run python bbc_spotify/combined.py -url {url}
 ```

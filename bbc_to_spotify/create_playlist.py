@@ -10,23 +10,29 @@ from spotipy.oauth2 import SpotifyOAuth
 load_dotenv()
 
 # Scope required for creating and modifying playlists
-scope = 'playlist-modify-public'
-username = os.getenv('USERNAME')
+scope = "playlist-modify-public"
+username = os.getenv("USERNAME")
 
 
 @click.command()
 @click.option("--playlist", type=click.STRING, help="Name of the playlist file")
-@click.option("--playlist-name", type=click.STRING, help="Name of the playlist to be created")
+@click.option(
+    "--playlist-name", type=click.STRING, help="Name of the playlist to be created"
+)
 def main(playlist: str, playlist_name: str):
     # Authenticating with Spotify
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=os.getenv('CLIENT_ID'),
-                                                client_secret=os.getenv('CLIENT_SECRET'),
-                                                redirect_uri=os.getenv('REDIRECT_URI'),
-                                                scope=scope,
-                                                username=username))
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            client_id=os.getenv("CLIENT_ID"),
+            client_secret=os.getenv("CLIENT_SECRET"),
+            redirect_uri=os.getenv("REDIRECT_URI"),
+            scope=scope,
+            username=username,
+        )
+    )
 
     # Reading the .txt file
-    with open(playlist, 'r') as file:
+    with open(playlist, "r") as file:
         song_names = [line.strip() for line in file]
 
     # Searching for songs and collecting URIs
@@ -34,10 +40,10 @@ def main(playlist: str, playlist_name: str):
     artists = []
     for song in song_names:
         result = sp.search(q=song, limit=5)
-        tracks = result['tracks']['items']
+        tracks = result["tracks"]["items"]
         if tracks:
-            name = tracks[0]['name']
-            artist = tracks[0]['artists'][0]['name']
+            name = tracks[0]["name"]
+            artist = tracks[0]["artists"][0]["name"]
             # only add if the song name and artist name match
             name = name.split("-")[0].strip()
             original_title = song.split("-")[1].strip().lower()
@@ -46,17 +52,23 @@ def main(playlist: str, playlist_name: str):
             if not match(name, original_title) or not match(artist, original_artist):
                 print(f"Couldn't find {original_title} {original_artist}")
                 continue
-            track_uris.append(tracks[0]['uri'])
+            track_uris.append(tracks[0]["uri"])
             artists.append(artist)
 
     # Creating a new playlist
-    playlist = sp.user_playlist_create(user=username, name=playlist_name, public=True,
-                                       description="Songs by " + ", ".join(list(set(artists))))
-    playlist_id = playlist['id']
+    playlist = sp.user_playlist_create(
+        user=username,
+        name=playlist_name,
+        public=True,
+        description="Songs by " + ", ".join(list(set(artists))),
+    )
+    playlist_id = playlist["id"]
 
     # Adding songs to the playlist
     if track_uris:
-        sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=track_uris)
+        sp.user_playlist_add_tracks(
+            user=username, playlist_id=playlist_id, tracks=track_uris
+        )
 
     print("Playlist created and tracks added successfully!")
 
@@ -80,8 +92,8 @@ def match(str1, str2):
     if "&" in str2:
         str2 = str2.replace("&", "and")
 
-    str1 = ''.join(e for e in str1 if e.isalnum())
-    str2 = ''.join(e for e in str2 if e.isalnum())
+    str1 = "".join(e for e in str1 if e.isalnum())
+    str2 = "".join(e for e in str2 if e.isalnum())
 
     if str1 == str2:
         return True
@@ -93,7 +105,7 @@ def match(str1, str2):
             return True
         else:
             return False
-        
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
